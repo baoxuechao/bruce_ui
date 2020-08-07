@@ -57,7 +57,6 @@ const user = {
         loginByUsername(userInfo.username, userInfo.password, userInfo.code, userInfo.redomStr).then(res => {
           const data = res.data.data;
           commit('SET_TOKEN', data.token);
-          commit('SET_USERID', data.id);
           commit('DEL_ALL_TAG');
           commit('CLEAR_LOCK');
           resolve();
@@ -76,9 +75,9 @@ const user = {
         })
       })
     },
-    GetUserInfo ({ state,commit }) {
+    GetUserInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.userId).then((res) => {
+        getUserInfo().then((res) => {
           const data = res.data.data;
           commit('SET_USERIFNO', data.userInfo);
           commit('SET_ROLES', data.roles);
@@ -106,7 +105,6 @@ const user = {
       return new Promise((resolve, reject) => {
         logout().then(() => {
           commit('SET_TOKEN', '')
-          commit('SET_USERID', '')
           commit('SET_MENUID', {})
           commit('SET_MENUALL', []);
           commit('SET_MENU', [])
@@ -125,7 +123,6 @@ const user = {
     FedLogOut ({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
-        commit('SET_USERID', '')
         commit('SET_MENUID', {})
         commit('SET_MENUALL', []);
         commit('SET_MENU', [])
@@ -167,9 +164,6 @@ const user = {
       state.token = token;
       setStore({ name: 'token', content: state.token })
     },
-    SET_USERID: (state, id) => {
-      state.userId = id;
-},
     SET_MENUID (state, menuId) {
       state.menuId = menuId;
       setStore({ name: 'menuId', content: state.menuId, type: 'session' })

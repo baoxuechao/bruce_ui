@@ -138,8 +138,6 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.$store.dispatch("LoginByUsername", this.loginForm).then(() => {
-            console.log('执行成功了')
-            console.log(this.tagWel.value)
             this.$router.push({ path: this.tagWel.value });
           });
         }

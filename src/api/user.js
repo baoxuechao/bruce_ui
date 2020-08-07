@@ -14,8 +14,8 @@ export const loginByUsername = (username, password, code, redomStr) => {
     })
 }
 
-export const getUserInfo = (userId) => request({
-    url: baseUrl + '/admin/user/getUserInfo/' + userId,
+export const getUserInfo = () => request({
+    url: baseUrl + '/admin/user/getUserInfo',
     method: 'get'
 });
 
@@ -25,7 +25,7 @@ export const refeshToken = () => request({
 })
 
 export const getMenu = (type = 0) => request({
-    url: baseUrl + '/admin/menu/getMenu/' + type,
+    url: baseUrl + '/admin/menu/getMenu?type=' + type,
     method: 'get'
 });
 

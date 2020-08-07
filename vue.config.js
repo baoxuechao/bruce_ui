@@ -30,9 +30,6 @@ module.exports = {
     entry
       .add('classlist-polyfill')
       .end()
-    entry
-      .add('@/mock')
-      .end()
   },
   /**
      * 环境配置
