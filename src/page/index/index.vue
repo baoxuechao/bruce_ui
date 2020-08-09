@@ -105,6 +105,8 @@ export default {
     openMenu (item = {}) {
       this.$store.dispatch("GetMenu", item.id).then(data => {
         if (data.length !== 0) {
+          console.log('进来了')
+          console.log(data)
           this.$router.$avueRouter.formatRoutes(data, true);
         }
         //当点击顶部菜单做的事件
