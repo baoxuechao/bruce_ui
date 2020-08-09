@@ -145,6 +145,9 @@ const user = {
     //获取系统菜单
     GetMenu ({ commit }, parentId) {
       return new Promise(resolve => {
+        if (parentId === null || parentId === '' || parentId === undefined) {
+          parentId = 0
+        }
         getMenu(parentId).then((res) => {
           const data = res.data.data
           let menu = deepClone(data);

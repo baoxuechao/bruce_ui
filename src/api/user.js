@@ -24,8 +24,8 @@ export const refeshToken = () => request({
     method: 'post'
 })
 
-export const getMenu = (type = 0) => request({
-    url: baseUrl + '/admin/menu/getMenu?type=' + type,
+export const getMenu = (parentId) => request({
+    url: baseUrl + '/admin/menu/getMenu?parentId=' + parentId,
     method: 'get'
 });
 

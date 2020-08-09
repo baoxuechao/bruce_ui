@@ -103,7 +103,7 @@ export default {
     },
     //打开菜单
     openMenu (item = {}) {
-      this.$store.dispatch("GetMenu", item.parentId).then(data => {
+      this.$store.dispatch("GetMenu", item.id).then(data => {
         if (data.length !== 0) {
           this.$router.$avueRouter.formatRoutes(data, true);
         }
