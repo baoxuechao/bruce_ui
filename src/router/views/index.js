@@ -45,13 +45,5 @@ export default [{
     },
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/user/info')
-  }, {
-    path: 'setting',
-    name: '个人设置',
-    meta: {
-      i18n: 'setting'
-    },
-    component: () =>
-      import( /* webpackChunkName: "views" */ '@/views/user/setting')
   }]
 }]

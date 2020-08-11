@@ -37,13 +37,13 @@ module.exports = {
   devServer: {
     proxy: {
       '/auth': {
-        // target: 'http://49.232.134.179:9002',
-        target: 'http://localhost:9002',
+        target: 'http://49.232.134.179:9002',
+        // target: 'http://localhost:9002',
         changeOrigin: true
       },
       '/admin': {
-        // target: 'http://49.232.134.179:9002',
-        target: 'http://localhost:9002',
+        target: 'http://49.232.134.179:9002',
+        // target: 'http://localhost:9002',
         changeOrigin: true
       },
     }

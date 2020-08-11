@@ -1,163 +1,156 @@
 <template>
-  <div class="user-info">
-    <el-row :span="24">
-      <el-col :span="8">
-        <basic-container>
-          <div class="user-info__content">
-            <img class="user-info__img"
-                 :src="form.img"
-                 alt="" />
-            <p class="user-info__name">{{form.name}}</p>
-            <router-link class="user-info__setting"
-                         :to="{path:'/info/setting'}">个人设置</router-link>
-            <p class="user-info__desc">{{form.ms}}</p>
-            <div class="user-info__detail-desc">
-              <p><i class="el-icon-message"></i><span>{{form.yx}}</span></p>
-              <p><i class="el-icon-postcard"></i><span>{{form.gs}} · {{form.bm}} · {{form.zw}}</span></p>
-              <p><i class="el-icon-location-information"></i><span>{{form.dz}}</span></p>
-            </div>
-            <div class="user-info__divider"></div>
-            <h4>标签</h4>
-            <div class="user-info__tags">
-              <el-tag effect="plain"
-                      v-for="(tag,index) in tags"
-                      :key="index">
-                {{tag}}
-              </el-tag>
-            </div>
-          </div>
-        </basic-container>
-      </el-col>
-      <el-col :span="16">
-        <basic-container>
-          <avue-tabs :option="option"
-                     v-model="form"
-                     @chang="handleChange"
-                     @submit="handleSubmit"></avue-tabs>
-        </basic-container>
-      </el-col>
-    </el-row>
-
+  <div class="app-container calendar-list-container">
+    <basic-container>
+      <el-tabs type="border-card">
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-postcard"></i> 个人信息</span>
+          <el-row>
+            <el-col :span="16">
+              <el-form ref="userInfo" :model="userInfo" :rules="rules" label-width="80px">
+                <el-form-item>
+                  <div class="demo-basic--circle" style="text-align: center">
+                    <div class="block"><el-avatar :size="120" :src="userInfo.avatar"></el-avatar></div>
+                  </div>
+                </el-form-item>
+                <el-form-item label="用户名" prop="username">
+                  <el-input v-model="userInfo.username" disabled="disabled"/>
+                </el-form-item>
+                <el-form-item label="手机号" prop="phone">
+                  <el-input v-model="userInfo.phone"/>
+                </el-form-item>
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="userInfo.email"/>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="subUserinfo">提交</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="密码设置">
+          <span slot="label"><i class="el-icon-lock"></i> 密码设置</span>
+          <el-form ref="password" :model="form" :rules="rules2" label-width="80px">
+                <el-form-item label="旧密码" prop="password">
+                  <el-input type="password" v-model="form.password"/>
+                </el-form-item>
+                <el-form-item label="新密码" prop="newPassword">
+                  <el-input type="password" v-model="form.newPassword"/>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="confirmPassword">
+                  <el-input type="password" v-model="form.confirmPassword"/>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="confirmEdit">确认修改</el-button>
+                  <el-button @click="reset">重置</el-button>
+                </el-form-item>
+              </el-form>
+        </el-tab-pane>
+    </el-tabs>
+    </basic-container>
   </div>
 </template>
 
 <script>
-import option from "@/const/user/info";
-export default {
-  data () {
-    return {
-      type: "info",
-      option: option,
-      tags: [
-        ' 善解人意',
-        '开朗乐观',
-        '真诚热情',
-        '心地善良',
-        '谦恭有礼',
-        '彬彬有礼',
-        '虚怀若谷',
-        '严于律己',
-        '雍容大度',
-        '热情洋溢',
-        '从容自若',
-        '诚挚',
-        '温厚',
-        '谦让',
-        '勤恳',
-        '耿直'
-      ],
-      form: {
-        img: 'https://avatar.gitee.com/uploads/61/632261_smallweigit.jpg!avatar100?1518660401',
-        username: "smallwei",
-        name: "smallwei",
-        ms: "保护头发，人人有责",
-        yx: "1634566606@qq.com",
-        gs: '某某公司',
-        bm: '某某部门',
-        zw: '前端开发工程师',
-        dz: '内蒙古',
-        bq: [1, 2, 3, 4],
-        oldpassword: 11111111,
-        newpassword: 22222222,
-        newpasswords: 22222222
+  import {mapState} from 'vuex'
+  import {editUserInfo, updatePassword} from '@/api/user'
+  export default {
+    data () {
+      const validPhone = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入电话号码'))
+        } else if (!this.isvalidPhone(value)) {
+          callback(new Error('请输入正确的11位手机号码'))
+        } else {
+          callback()
+        }
       }
-    };
-  },
-  created () {
-
-  },
-  methods: {
-    handleSubmit () {
-      this.$message({
-        message: this.form,
-        type: "success"
-      });
+      const validEmail = (rule, value, callback) => {
+        if (!this.isvalidEmail(value)) {
+          callback(new Error('请输入正确的邮箱地址'))
+        } else {
+          callback()
+        }
+      }
+      const validatePass = (rule, value, callback) => {
+        if (this.form.password !== '') {
+          if (value !== this.form.newPassword) {
+            callback(new Error('两次输入密码不一致!'))
+          } else {
+            callback()
+          }
+        } else {
+          callback()
+        }
+      }
+      return {
+        form: {id: null, password: '', newPassword: '', confirmPassword: ''},
+        rules: {
+          phone: [
+            {required: true, trigger: "blur", validator: validPhone}
+          ],
+          email: [
+            {required: true, trigger: "blur", validator: validEmail}
+          ]
+        },
+        rules2: {
+          password: [{required: true, min: 6, message: '原密码不能为空且不少于6位', trigger: 'change'}],
+          newPassword: [{required: false, min: 6, message: '不少于6位', trigger: 'change'}],
+          confirmPassword: [{required: false, validator: validatePass, trigger: 'blur'}]
+        }
+      };
     },
-    handleChange (item) {
-      this.type = item.prop;
+    computed: {
+      ...mapState({
+        userInfo: state => state.user.userInfo
+      })
+    },
+    created () {
+      this.initPage()
+    },
+    methods: {
+      initPage() {
+        this.form.id = this.userInfo.id
+      },
+      subUserinfo() {
+        this.$refs['userInfo'].validate((valid) => {
+          if (valid) {
+            editUserInfo(this.userInfo).then(res => {
+              const data = res.data
+              if (data.code===200) {
+                this.$message.success(data.message)
+              } else {
+                this.$message.error(data.message)
+              }
+            })
+          }
+        })
+      },
+      confirmEdit() {
+        this.$refs['password'].validate((valid) => {
+          if (valid) {
+            updatePassword(this.form).then(res => {
+              const data = res.data
+              if (data.code===200) {
+                this.$message.success(data.message)
+              } else {
+                this.$message.error(data.message)
+              }
+            })
+          }
+        })
+      },
+      reset() {
+        this.form = {id: null, password: '', newPassword: '', confirmPassword: ''}
+      },
+      isvalidPhone(str) {
+        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+        return reg.test(str)
+      },
+      isvalidEmail(str) {
+        const reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+        return reg.test(str)
+      }
     }
-  }
-};
+  };
 </script>
-
-<style lang="scss">
-.user-info {
-  .avue-tabs {
-    padding: 0 10px;
-  }
-  .el-tabs__content {
-    padding: 20px 0;
-  }
-  &__img {
-    display: block;
-    margin: 0 auto;
-    border-radius: 100%;
-    width: 100px;
-    height: 100px;
-  }
-  &__name {
-    text-align: center;
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.85);
-    margin-bottom: 0;
-    margin-top: 10px;
-  }
-  &__setting {
-    margin-bottom: 12px;
-    display: block;
-    font-size: 12px;
-    color: #409eff;
-    text-align: center;
-  }
-  &__desc {
-    text-align: center;
-    width: 200px;
-    margin: 0 auto;
-  }
-  &__detail-desc {
-    margin-top: 50px;
-    font-size: 14px;
-    p {
-      margin-bottom: 10px;
-    }
-    span {
-      margin-left: 10px;
-    }
-  }
-  &__divider {
-    border-top: 1px dashed #e8e8e8;
-    display: block;
-    height: 0;
-    width: 100%;
-    margin: 24px 0;
-    clear: both;
-  }
-  &__tags {
-    .el-tag {
-      margin: 0 5px 5px 0;
-    }
-  }
-}
-</style>

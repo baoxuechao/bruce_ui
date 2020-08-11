@@ -19,6 +19,18 @@ export const getUserInfo = () => request({
     method: 'get'
 });
 
+export const editUserInfo = (data) => request({
+    url: baseUrl + '/admin/user/editUserInfo',
+    method: 'post',
+    data: data
+})
+
+export const updatePassword = (data) => request({
+    url: baseUrl + '/admin/user/updatePassword',
+    method: 'post',
+    data: data
+})
+
 export const refeshToken = () => request({
     url: baseUrl + '/user/refesh',
     method: 'post'
