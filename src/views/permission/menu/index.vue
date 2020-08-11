@@ -8,7 +8,7 @@
                   </el-button>
                 </el-form-item>
               </el-form>
-            <el-table :data="tableData" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id" v-loading="loading" style="width: 100%;margin-bottom: 20px;" border>
+            <el-table :data="tableData" :tree-props="{children: 'children'}" row-key="id" v-loading="loading" style="width: 100%;margin-bottom: 20px;" border>
                 <el-table-column prop="name" label="菜单名称" width="180"/>
                 <el-table-column prop="icon" label="图标" align="center" width="80">
                     <template slot-scope="scope">
@@ -49,7 +49,7 @@
                     </template>
                 </el-table-column>
               </el-table>
-            <TableForm v-if="addOrUpdateVisible" ref="addOrUpdate"></TableForm>
+            <TableForm v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="initData"></TableForm>
         </div>
     </basic-container>
 </template>
@@ -83,18 +83,23 @@
                 })
             },
             handleDelete(id) {
-                this.$confirm('是否确认删除?', "警告", {
-                  confirmButtonText: "确定",
-                  cancelButtonText: "取消",
-                  type: "warning"
-                }).then(function () {
-                    delMenu(id)
+                this.$confirm('确定要删除吗?','提示',{
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
                 }).then(() => {
-                  this.initData();
-                  this.$message.success('删除成功')
+                    delMenu(id).then(res => {
+                        if (res.data.code===200){
+                            this.$message.success(res.data.message)
+                        } else {
+                            this.$message.error(res.data.message)
+                        }
+                        this.initData();
+                    })
                 })
             },
             updateHandle(menu) {
+                console.log(menu)
                 this.addOrUpdateVisible = true
                 this.$nextTick(() => {
                   this.$refs.addOrUpdate.init(menu)

@@ -16,3 +16,8 @@ export const addObj = (data) => request({
     method: 'post',
     data: data
 })
+
+export const getTree = () => request({
+    url: baseUrl + '/admin/menu/getMenuTree',
+    method: 'get'
+})
