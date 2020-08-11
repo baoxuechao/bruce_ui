@@ -3,7 +3,7 @@
         <div class="avue-crud">
             <el-form :inline="true">
                 <el-form-item>
-                  <el-button icon="el-icon-plus" type="primary" @click="addOrUpdateHandle">
+                  <el-button icon="el-icon-plus" type="primary" @click="add">
                     添加
                   </el-button>
                 </el-form-item>
@@ -11,7 +11,7 @@
             <el-table :data="tableData" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id" v-loading="loading" style="width: 100%;margin-bottom: 20px;" border>
                 <el-table-column prop="name" label="菜单名称" width="180"/>
                 <el-table-column prop="icon" label="图标" align="center" width="80">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <i :class="scope.row.icon"></i>
                     </template>
                 </el-table-column>
@@ -32,11 +32,11 @@
                 </el-table-column>
                 <el-table-column prop="permission" label="权限标识" align="center"/>
                 <el-table-column label="操作" align="center">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-button size="small"
                            type="text"
                            icon="el-icon-edit"
-                           @click="addOrUpdateHandle(scope.row)"
+                           @click="updateHandle(scope.row)"
                            v-if="permission.sys_menu_edit">修改
                         </el-button>
                         <el-button
@@ -49,9 +49,9 @@
                     </template>
                 </el-table-column>
               </el-table>
-             <TableForm v-if="addOrUpdateVisible" ref="addOrUpdate"></TableForm>
+            <TableForm v-if="addOrUpdateVisible" ref="addOrUpdate"></TableForm>
         </div>
-  </basic-container>
+    </basic-container>
 </template>
 
 <script>
@@ -94,11 +94,17 @@
                   this.$message.success('删除成功')
                 })
             },
-            addOrUpdateHandle(menu) {
-                console.log(menu)
+            updateHandle(menu) {
                 this.addOrUpdateVisible = true
-                this.$refs.addOrUpdate.visible = true
-                // this.$refs.addOrUpdate.form = menu
+                this.$nextTick(() => {
+                  this.$refs.addOrUpdate.init(menu)
+                })
+            },
+            add() {
+                this.addOrUpdateVisible = true
+                this.$nextTick(() => {
+                  this.$refs.addOrUpdate.init(null)
+                })
             }
         }
   }

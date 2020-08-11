@@ -63,8 +63,6 @@
     name: "Menu",
     data() {
       return {
-        // 遮罩层
-        loading: true,
         // 菜单树选项
         menuOptions: [],
         // 是否显示弹出层
@@ -105,28 +103,14 @@
     },
     methods: {
       // 表单提交
+      init(menu) {
+        if (menu!==null){
+          this.form = menu
+        }
+        this.visible = true
+      },
       dataFormSubmit() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            if (this.form.parentId === undefined) {
-              this.form.parentId = -1
-            }
-
-            if (this.form.menuId) {
-              putObj(this.form).then(data => {
-                this.$message.success('修改成功')
-                this.visible = false
-                this.$emit('refreshDataList')
-              });
-            } else {
-              addObj(this.form).then(data => {
-                this.$message.success('添加成功')
-                this.visible = false
-                this.$emit('refreshDataList')
-              })
-            }
-          }
-        })
+        console.log('保存操作')
       }
     }
   };
